@@ -9,7 +9,7 @@ MODEL_PATH = Path("artifacts/model.pkl")
 if not MODEL_PATH.exists():
     # convenience: train if model is missing
     import train as _train
-    # _train.main()
+    _train.main()
 
 # joblib is being used to deserialize (load) a previously serialized (saved) machine learning model from disk (artifacts/model.pkl)
 model = joblib.load(MODEL_PATH)
