@@ -4,6 +4,7 @@
 Usage:
     python run_model.py --input "[5.1, 3.5, 1.4, 0.2]"
 """
+from sklearn.datasets import load_iris
 from pathlib import Path
 import argparse
 import joblib
@@ -36,7 +37,9 @@ def main():
     model = load_model()
     prediction = model.predict(X)
 
-    print(json.dumps({"prediction": prediction.tolist()}))
+    iris = load_iris()
+    species_name = iris.target_names[prediction[0]]
+    print(json.dumps({"prediction": species_name}))
 
 if __name__ == "__main__":
     main()
