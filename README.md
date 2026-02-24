@@ -15,4 +15,4 @@ Train the model: python train.py
 
 Run a single prediction from CLI: python run_model.py --input "[5.1, 3.5, 1.4, 0.2]"
 
-Start the API: python src/app.py Then test: curl -X POST "http://127.0.0.1:5000/predict" -H "Content-Type: application/json" -d '{"features":[5.1,3.5,1.4,0.2]}'
+Start the API: python src/app.py Then test: curl -X POST "http://127.0.0.1:5001/predict" -H "Content-Type: application/json" -d '{"features":[5.1,3.5,1.4,0.2]}'
