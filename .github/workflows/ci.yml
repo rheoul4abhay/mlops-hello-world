@@ -5,8 +5,12 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  IMAGE_NAME: abhayshrivastava/iris-mlops
+  IMAGE_TAG: ${GITHUB_SHA::7}
+
 jobs:
-  matrix-pip:
+  train:
     name: Train and save the model
     runs-on: ubuntu-latest
     strategy: # This makes sure it runs on both the versions of python
@@ -33,9 +37,38 @@ jobs:
           python train.py
           ls -la artifacts
 
-      - name: Upload artifacts
+      - name: Upload artifacts (model + metrics)
         uses: actions/upload-artifact@v4
         with:
           name: ml-artifact-${{ matrix.python }}-${{ github.run_id }}
           path: artifacts
 
+  dockerize:
+    name: Build & push Docker image
+    needs: train
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts from train job
+        uses: actions/download-artifact@v4
+        with:
+          name: ml-artifact-${{ matrix.python }}-${{ github.run_id }}
+          path: artifacts
+
+      - name: Verify downloaded artifact
+        run: ls -la artifacts
+
+      - name: DockerHub login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $IMAGE_NAME:$IMAGE_TAG -t $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:latest
