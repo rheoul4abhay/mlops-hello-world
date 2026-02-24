@@ -33,7 +33,7 @@ def main():
         json.dump(metrics, f)
 
     print(f"Saved model to {model_path}")
-    print(f"Test accuracy is {accuracy:.4f}")
+    print(f"Test accuracy is {accuracy * 100}%")
 
 if __name__ == "__main__":
     main()
